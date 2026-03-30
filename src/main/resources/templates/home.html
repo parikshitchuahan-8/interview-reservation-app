@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerSprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+        body {
+            font-family: "Space Grotesk", "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 15%, rgba(45, 212, 191, 0.16), transparent 18%),
+                radial-gradient(circle at 85% 20%, rgba(251, 146, 60, 0.16), transparent 18%),
+                radial-gradient(circle at 50% 85%, rgba(56, 189, 248, 0.16), transparent 20%),
+                linear-gradient(135deg, #020617 0%, #111827 45%, #0f172a 100%);
+        }
+
+        .mono {
+            font-family: "IBM Plex Mono", monospace;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100">
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <nav class="flex items-center justify-between rounded-full border border-white/10 bg-white/5 px-5 py-4 backdrop-blur">
+        <div>
+            <p class="mono text-sm uppercase tracking-[0.35em] text-teal-300">CareerSprint</p>
+        </div>
+        <div class="flex gap-3">
+            <a href="/login" class="rounded-full border border-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/10">Login</a>
+            <a href="/register" class="rounded-full bg-teal-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-teal-300">Create account</a>
+        </div>
+    </nav>
+
+    <section class="grid gap-10 py-16 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+        <div>
+            <p class="mono text-sm uppercase tracking-[0.35em] text-cyan-300">Placement workflow system</p>
+            <h1 class="mt-5 max-w-4xl text-5xl font-bold leading-tight sm:text-6xl">A placement tracker that thinks like a career operating system, not a college mini project.</h1>
+            <p class="mt-6 max-w-2xl text-lg text-slate-300">
+                CareerSprint helps students run their job hunt with more intention by combining application tracking, interview timelines, resume variants, recruiter follow-ups, and execution coaching in one full-stack product.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-4">
+                <a href="/register" class="rounded-full bg-amber-300 px-6 py-3 font-semibold text-slate-950 transition hover:bg-amber-200">Start building your pipeline</a>
+                <a href="/login" class="rounded-full border border-white/10 px-6 py-3 font-semibold text-white transition hover:bg-white/10">See dashboard</a>
+            </div>
+
+            <div class="mt-10 grid gap-4 sm:grid-cols-3">
+                <div class="rounded-3xl border border-white/10 bg-white/5 p-5">
+                    <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Signal</p>
+                    <p class="mt-2 text-lg font-semibold">Readiness scoring</p>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-white/5 p-5">
+                    <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Workflow</p>
+                    <p class="mt-2 text-lg font-semibold">Recruiter follow-ups</p>
+                </div>
+                <div class="rounded-3xl border border-white/10 bg-white/5 p-5">
+                    <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Edge</p>
+                    <p class="mt-2 text-lg font-semibold">Resume strategy</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-5">
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Why it stands out</p>
+                <ul class="mt-4 space-y-4 text-sm text-slate-200">
+                    <li>Solves a real placement problem instead of cloning a booking system or to-do list.</li>
+                    <li>Shows product thinking with dashboards, prioritization logic, and actionable next steps.</li>
+                    <li>Demonstrates full-stack breadth using Spring Boot, Thymeleaf, HTMX, JPA, and PostgreSQL.</li>
+                </ul>
+            </div>
+
+            <div class="rounded-[2rem] border border-cyan-300/20 bg-cyan-300/10 p-6">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-cyan-100">Interview pitch</p>
+                <p class="mt-4 text-sm leading-7 text-slate-100">
+                    I built CareerSprint to treat placement prep as an operating system problem. Students do not just need CRUD screens. They need prioritization, follow-up discipline, interview planning, and visibility into what resume version and strategy they used for each company.
+                </p>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>
