@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerSprint Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+        body {
+            font-family: "Space Grotesk", "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(255, 159, 67, 0.18), transparent 24%),
+                radial-gradient(circle at top right, rgba(0, 194, 168, 0.2), transparent 20%),
+                linear-gradient(135deg, #0f172a 0%, #111827 45%, #1f2937 100%);
+        }
+
+        .mono {
+            font-family: "IBM Plex Mono", monospace;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100">
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+            <p class="mono text-sm uppercase tracking-[0.3em] text-teal-300">CareerSprint</p>
+            <h1 class="mt-2 text-4xl font-bold">Placement command center for focused job hunting</h1>
+            <p class="mt-3 max-w-2xl text-slate-300">
+                Welcome back, <span th:text="${username}" class="text-white"></span>. Track applications, move stages faster, and build an interview-ready story around your effort.
+            </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <a href="/applications/new" class="rounded-full bg-teal-400 px-5 py-3 font-semibold text-slate-900 transition hover:bg-teal-300">Add application</a>
+            <a href="/applications/export" class="rounded-full border border-cyan-300/30 px-5 py-3 font-semibold text-cyan-200 transition hover:bg-cyan-300/10">Export CSV</a>
+            <a href="/logout" class="rounded-full border border-white/20 px-5 py-3 font-semibold text-white transition hover:bg-white/10">Logout</a>
+        </div>
+    </div>
+
+    <div th:if="${message}" class="mb-6 rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-5 py-4 text-emerald-100">
+        <p th:text="${message}"></p>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Applications</p>
+            <p class="mt-3 text-4xl font-bold" th:text="${totalApplications}"></p>
+            <p class="mt-2 text-sm text-slate-300">Total roles tracked across your placement pipeline.</p>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Active pipeline</p>
+            <p class="mt-3 text-4xl font-bold text-amber-300" th:text="${activePipelines}"></p>
+            <p class="mt-2 text-sm text-slate-300">Applications still moving through rounds.</p>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Upcoming interviews</p>
+            <p class="mt-3 text-4xl font-bold text-cyan-300" th:text="${upcomingCount}"></p>
+            <p class="mt-2 text-sm text-slate-300">Scheduled interviews from today onward.</p>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Offers</p>
+            <p class="mt-3 text-4xl font-bold text-emerald-300" th:text="${offersCount}"></p>
+            <p class="mt-2 text-sm text-slate-300">Offer-stage wins you can showcase in placements.</p>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Avg mock score</p>
+            <p class="mt-3 text-4xl font-bold text-fuchsia-300" th:text="${averageMockScore}"></p>
+            <p class="mt-2 text-sm text-slate-300">Average mock interview score across recorded entries.</p>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur md:col-span-2 xl:col-span-4">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Career operations</p>
+                    <p class="mt-2 text-lg font-semibold text-white">You are managing <span th:text="${resumeVariantCount}"></span> resume variant<span th:text="${resumeVariantCount == 1 ? '' : 's'}"></span> across your pipeline.</p>
+                </div>
+                <div class="rounded-full bg-white/5 px-4 py-2 text-sm text-slate-300">
+                    Follow-up hygiene turns applications into conversations.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8 grid gap-6 xl:grid-cols-[1.25fr_0.75fr]">
+        <section class="rounded-[2rem] border border-white/10 bg-slate-950/50 p-6 backdrop-blur">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                    <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Pipeline board</p>
+                    <h2 class="mt-2 text-2xl font-semibold">Tracked applications</h2>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <a href="/dashboard?status=All" th:classappend="${selectedStatus == 'All' ? ' bg-teal-400 text-slate-950 border-teal-300' : ' border-white/10 text-slate-300 hover:bg-white/5'}" class="rounded-full border px-4 py-2 text-sm font-medium transition">All</a>
+                    <a th:each="entry : ${statusSummary}" th:if="${entry.value > 0}" th:href="@{/dashboard(status=${entry.key})}" th:classappend="${selectedStatus == entry.key ? ' bg-teal-400 text-slate-950 border-teal-300' : ' border-white/10 text-slate-300 hover:bg-white/5'}" class="rounded-full border px-4 py-2 text-sm font-medium transition" th:text="${entry.key + ' (' + entry.value + ')'}"></a>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(applications)}" class="mt-6 rounded-3xl border border-dashed border-white/15 bg-white/5 p-8 text-center text-slate-300">
+                <p class="text-xl font-semibold text-white">No applications found for this view</p>
+                <p class="mt-2">Try another stage filter or add your next company to keep the pipeline warm.</p>
+            </div>
+
+            <div th:if="${!#lists.isEmpty(applications)}" class="mt-6 overflow-hidden rounded-3xl border border-white/10">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-white/10">
+                        <thead class="bg-white/5">
+                        <tr class="text-left text-sm text-slate-300">
+                            <th class="px-4 py-3 font-medium">Company</th>
+                            <th class="px-4 py-3 font-medium">Role</th>
+                            <th class="px-4 py-3 font-medium">Readiness</th>
+                            <th class="px-4 py-3 font-medium">Stage control</th>
+                            <th class="px-4 py-3 font-medium">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="application-table-body" class="divide-y divide-white/10 bg-slate-950/30 text-sm">
+                        <th:block th:each="application : ${applications}">
+                            <tr th:replace="~{fragments/application-row :: row(application=${application})}"></tr>
+                        </th:block>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-6">
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Focus mode</p>
+                <h2 class="mt-2 text-2xl font-semibold">Best next opportunity</h2>
+                <div th:if="${focusApplication != null}" class="mt-5 rounded-3xl border border-amber-300/20 bg-amber-300/10 p-5">
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xl font-semibold text-white" th:text="${focusApplication.companyName}"></p>
+                            <p class="text-slate-200" th:text="${focusApplication.roleTitle + ' | ' + focusApplication.jobLocation}"></p>
+                        </div>
+                        <span class="rounded-full bg-slate-950/50 px-3 py-1 text-sm text-amber-200" th:text="${focusApplication.readinessScore + '% ready'}"></span>
+                    </div>
+                    <p class="mt-4 text-sm text-slate-100" th:text="${focusApplication.suggestedNextAction}"></p>
+                    <p class="mt-3 text-sm text-slate-300" th:text="${focusApplication.notes}"></p>
+                </div>
+                <div th:if="${focusApplication == null}" class="mt-5 rounded-3xl border border-dashed border-white/15 p-5 text-slate-300">
+                    Add applications to unlock a prioritized focus recommendation here.
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Coach tips</p>
+                <h2 class="mt-2 text-2xl font-semibold">Execution guidance</h2>
+                <div class="mt-5 space-y-3">
+                    <div th:each="tip : ${coachTips}" class="rounded-2xl border border-white/10 bg-slate-950/40 p-4 text-sm text-slate-200" th:text="${tip}"></div>
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Confidence map</p>
+                <h2 class="mt-2 text-2xl font-semibold">Prep confidence distribution</h2>
+                <div class="mt-5 space-y-4">
+                    <div th:each="entry : ${confidenceSummary}">
+                        <div class="mb-2 flex items-center justify-between text-sm">
+                            <span class="text-slate-200" th:text="${entry.key}"></span>
+                            <span class="text-slate-400" th:text="${entry.value}"></span>
+                        </div>
+                        <div class="h-3 overflow-hidden rounded-full bg-white/10">
+                            <div class="h-full rounded-full bg-gradient-to-r from-cyan-300 to-teal-300" th:style="${'width:' + (totalApplications == 0 ? 0 : (entry.value * 100 / totalApplications)) + '%'}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Momentum chart</p>
+                <h2 class="mt-2 text-2xl font-semibold">Application progress over time</h2>
+                <div class="mt-5 flex items-end gap-3">
+                    <div th:each="entry : ${monthlyProgress}" class="flex flex-1 flex-col items-center gap-2">
+                        <div class="flex h-40 w-full items-end rounded-2xl bg-white/5 p-2">
+                            <div class="w-full rounded-xl bg-gradient-to-t from-teal-300 to-cyan-300" th:style="${'height:' + (peakMonthCount == 0 ? 0 : (entry.value * 100 / peakMonthCount)) + '%; min-height:' + (entry.value > 0 ? '18px' : '0px')}"></div>
+                        </div>
+                        <p class="text-xs text-slate-400" th:text="${entry.key}"></p>
+                        <p class="text-sm font-semibold text-white" th:text="${entry.value}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Recent activity</p>
+                <h2 class="mt-2 text-2xl font-semibold">Latest pipeline changes</h2>
+                <div th:if="${#lists.isEmpty(recentActivity)}" class="mt-5 rounded-3xl border border-dashed border-white/15 p-5 text-slate-300">
+                    Activity appears here as you update companies, interview stages, and milestones.
+                </div>
+                <div th:if="${!#lists.isEmpty(recentActivity)}" class="mt-5 space-y-4">
+                    <div th:each="application : ${recentActivity}" class="rounded-3xl border border-white/10 bg-slate-950/35 p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="font-semibold text-white" th:text="${application.companyName}"></p>
+                                <p class="text-slate-300" th:text="${application.roleTitle + ' | ' + application.status}"></p>
+                            </div>
+                            <span class="rounded-full bg-white/5 px-3 py-1 text-sm text-slate-300" th:text="${application.updatedOn}"></span>
+                        </div>
+                        <p class="mt-3 text-sm text-slate-200" th:text="${application.nextMilestone}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Follow-up radar</p>
+                <h2 class="mt-2 text-2xl font-semibold">Recruiter reminders</h2>
+                <div th:if="${#lists.isEmpty(followUpsDue)}" class="mt-5 rounded-3xl border border-dashed border-white/15 p-5 text-slate-300">
+                    No follow-ups are due right now. That means your pipeline is either fresh or cleanly maintained.
+                </div>
+                <div th:if="${!#lists.isEmpty(followUpsDue)}" class="mt-5 space-y-4">
+                    <div th:each="application : ${followUpsDue}" class="rounded-3xl border border-rose-300/20 bg-rose-300/10 p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="font-semibold text-white" th:text="${application.companyName}"></p>
+                                <p class="text-slate-300" th:text="${application.roleTitle}"></p>
+                            </div>
+                            <span class="rounded-full bg-slate-950/50 px-3 py-1 text-sm text-rose-200" th:text="${application.followUpDate}"></span>
+                        </div>
+                        <p class="mt-3 text-sm text-slate-200" th:text="${application.recruiterName != null and !#strings.isEmpty(application.recruiterName) ? 'Reach out to ' + application.recruiterName : 'Send a recruiter follow-up'}"></p>
+                        <p class="mt-1 text-sm text-slate-300" th:text="${application.resumeVersion != null ? 'Resume used: ' + application.resumeVersion : 'Resume version not tracked'}"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
+                <p class="mono text-xs uppercase tracking-[0.25em] text-slate-400">Interview radar</p>
+                <h2 class="mt-2 text-2xl font-semibold">Upcoming interviews</h2>
+                <div th:if="${#lists.isEmpty(upcomingInterviews)}" class="mt-5 rounded-3xl border border-dashed border-white/15 p-5 text-slate-300">
+                    No interviews are scheduled yet. Add one from the application form to make your prep timeline visible here.
+                </div>
+                <div th:if="${!#lists.isEmpty(upcomingInterviews)}" class="mt-5 space-y-4">
+                    <div th:each="application : ${upcomingInterviews}" class="rounded-3xl border border-cyan-300/20 bg-cyan-300/10 p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <p class="font-semibold text-white" th:text="${application.companyName}"></p>
+                                <p class="text-slate-300" th:text="${application.roleTitle}"></p>
+                            </div>
+                            <span class="rounded-full bg-slate-950/50 px-3 py-1 text-sm text-cyan-200" th:text="${application.interviewDate}"></span>
+                        </div>
+                        <p class="mt-3 text-sm text-slate-200" th:text="${'Prep focus: ' + application.prepFocus}"></p>
+                        <p class="mt-1 text-sm text-slate-300" th:text="${application.notes}"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
