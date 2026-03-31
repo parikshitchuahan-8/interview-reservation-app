@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+        body {
+            font-family: "Space Grotesk", "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 20%),
+                radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.18), transparent 22%),
+                linear-gradient(140deg, #020617 0%, #111827 55%, #0f172a 100%);
+        }
+
+        .mono {
+            font-family: "IBM Plex Mono", monospace;
+        }
+    </style>
+</head>
+<body class="min-h-screen px-4 py-8 text-slate-100">
+<div class="mx-auto max-w-5xl rounded-[2rem] border border-white/10 bg-slate-950/65 p-8 backdrop-blur">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <p class="mono text-sm uppercase tracking-[0.3em] text-cyan-300">New pipeline entry</p>
+            <h1 class="mt-3 text-4xl font-bold" th:text="${formMode == 'edit' ? 'Edit placement application' : 'Add a placement application'}"></h1>
+            <p class="mt-3 max-w-2xl text-slate-300">Capture the company, interview timeline, prep focus, and offer potential in a way that actually helps you prepare.</p>
+        </div>
+        <a href="/dashboard" class="rounded-full border border-white/15 px-5 py-3 font-semibold text-white transition hover:bg-white/10">Back to dashboard</a>
+    </div>
+
+    <form method="post" th:attr="action=${formAction}" class="mt-8 grid gap-5 md:grid-cols-2">
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Company name</label>
+            <input type="text" name="companyName" required th:value="${application.companyName}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Role title</label>
+            <input type="text" name="roleTitle" required th:value="${application.roleTitle}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Location</label>
+            <input type="text" name="jobLocation" required placeholder="Bengaluru, Hyderabad, Remote" th:value="${application.jobLocation}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Application link</label>
+            <input type="url" name="applicationLink" required placeholder="https://company.com/careers/..." th:value="${application.applicationLink}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Applied on</label>
+            <input type="date" name="appliedOn" required th:value="${application.appliedOn}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Interview date</label>
+            <input type="date" name="interviewDate" th:value="${application.interviewDate}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Follow-up date</label>
+            <input type="date" name="followUpDate" th:value="${application.followUpDate}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Current stage</label>
+            <select name="status" class="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30">
+                <option value="Applied" th:selected="${application.status == 'Applied'}">Applied</option>
+                <option value="Assessment" th:selected="${application.status == 'Assessment'}">Assessment</option>
+                <option value="Interview Scheduled" th:selected="${application.status == 'Interview Scheduled'}">Interview Scheduled</option>
+                <option value="Interviewing" th:selected="${application.status == 'Interviewing'}">Interviewing</option>
+                <option value="HR Round" th:selected="${application.status == 'HR Round'}">HR Round</option>
+                <option value="Offer" th:selected="${application.status == 'Offer'}">Offer</option>
+                <option value="Rejected" th:selected="${application.status == 'Rejected'}">Rejected</option>
+            </select>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Work mode</label>
+            <select name="workMode" class="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30">
+                <option value="On-site" th:selected="${application.workMode == 'On-site'}">On-site</option>
+                <option value="Hybrid" th:selected="${application.workMode == 'Hybrid'}">Hybrid</option>
+                <option value="Remote" th:selected="${application.workMode == 'Remote'}">Remote</option>
+            </select>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Priority</label>
+            <select name="priority" class="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30">
+                <option value="High" th:selected="${application.priority == 'High'}">High</option>
+                <option value="Medium" th:selected="${application.priority == 'Medium'}">Medium</option>
+                <option value="Low" th:selected="${application.priority == 'Low'}">Low</option>
+            </select>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Expected package</label>
+            <input type="text" name="compensationRange" required placeholder="6-10 LPA" th:value="${application.compensationRange}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Recruiter name</label>
+            <input type="text" name="recruiterName" placeholder="Priya Nair" th:value="${application.recruiterName}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Recruiter email</label>
+            <input type="email" name="recruiterEmail" placeholder="priya@company.com" th:value="${application.recruiterEmail}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div class="md:col-span-2">
+            <label class="mb-2 block text-sm font-medium text-slate-200">Resume version</label>
+            <input type="text" name="resumeVersion" required placeholder="Backend-v3, FullStack-v2, ML-v1" th:value="${application.resumeVersion}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Mock interview score</label>
+            <input type="number" name="mockInterviewScore" min="0" max="100" placeholder="72" th:value="${application.mockInterviewScore}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div>
+            <label class="mb-2 block text-sm font-medium text-slate-200">Confidence level</label>
+            <select name="confidenceLevel" class="w-full rounded-2xl border border-white/10 bg-slate-900 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30">
+                <option value="High" th:selected="${application.confidenceLevel == 'High'}">High</option>
+                <option value="Medium" th:selected="${application.confidenceLevel == 'Medium'}">Medium</option>
+                <option value="Low" th:selected="${application.confidenceLevel == 'Low'}">Low</option>
+            </select>
+        </div>
+        <div class="md:col-span-2">
+            <label class="mb-2 block text-sm font-medium text-slate-200">Next milestone</label>
+            <input type="text" name="nextMilestone" required placeholder="System design mock on Friday, recruiter follow-up, OA attempt" th:value="${application.nextMilestone}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div class="md:col-span-2">
+            <label class="mb-2 block text-sm font-medium text-slate-200">Prep focus</label>
+            <input type="text" name="prepFocus" required placeholder="DSA arrays, low-level design, Spring Boot APIs" th:value="${application.prepFocus}" class="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30"/>
+        </div>
+        <div class="md:col-span-2">
+            <label class="mb-2 block text-sm font-medium text-slate-200">Notes</label>
+            <textarea name="notes" rows="5" required placeholder="Mention OA deadline, recruiter contact, interview topics, or custom strategy..." class="w-full rounded-3xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-300/30" th:text="${application.notes}"></textarea>
+        </div>
+        <div class="md:col-span-2 flex flex-wrap gap-3 pt-2">
+            <button type="submit" class="rounded-full bg-cyan-300 px-6 py-3 font-semibold text-slate-950 transition hover:bg-cyan-200" th:text="${formMode == 'edit' ? 'Update application' : 'Save application'}"></button>
+            <a href="/dashboard" class="rounded-full border border-white/15 px-6 py-3 font-semibold text-white transition hover:bg-white/10">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>
