@@ -1,31 +1,58 @@
 # Interview Reservation App
 
-This repository is now organized with the Spring Boot application living in `backend/`.
+Interview Reservation App is a Spring Boot application for managing interview scheduling workflows, user registration, reservation handling, dashboard insights, and reminder automation.
 
-## Structure
+## Highlights
 
-- `backend/` - interview reservation backend application
-- `backend/src/main/java` - controllers, entities, repositories, services, and utilities
-- `backend/src/main/resources` - application properties, Thymeleaf templates, and static assets
-- `backend/src/test/java` - backend test suite
+- User registration and login flows
+- Reservation management for interview scheduling
+- Dashboard and reporting support
+- Reminder automation service
+- Spring Boot web application with Thymeleaf views
+- PostgreSQL-backed persistence through Spring Data JPA
 
-## Run locally
+## Tech Stack
 
-1. Change into the backend project:
+- Java 21
+- Spring Boot
+- Spring MVC
+- Spring Data JPA
+- Thymeleaf
+- PostgreSQL
+- Maven
 
-```powershell
-cd backend
+## Project Structure
+
+```text
+interview-reservation-app/
+|-- src/main/java/com/example/system/
+|   |-- controller/
+|   |-- entity/
+|   |-- repository/
+|   |-- service/
+|   `-- util/
+|-- src/main/resources/
+|-- src/test/java/
+|-- pom.xml
+`-- Dockerfile
 ```
 
-2. Start the application:
+## Run Locally
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-3. Open `http://localhost:8080`
+Then open `http://localhost:8080`.
+
+## Key Modules
+
+- `ReservationController` for reservation workflows
+- `DashboardController` for high-level application views
+- `UserRegistrationController` for onboarding users
+- `ReminderAutomationService` for reminder-related logic
 
 ## Notes
 
-- The original app README has been copied to `backend/README.md`.
-- This root README now describes the repository layout rather than the Spring Boot module internals.
+- Keep local logs, IDE files, and generated output files out of version control.
+- Review datasource and mail configuration before running the application locally.
